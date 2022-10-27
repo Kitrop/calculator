@@ -72,6 +72,8 @@ class Calculator(QWidget):
         self.b_2.clicked.connect(lambda: self._button("2"))
         self.b_3.clicked.connect(lambda: self._button("3"))
 
+
+
     def _button(self, param):
         line = self.input.text()
         self.input.setText(line + param)
