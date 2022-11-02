@@ -1,12 +1,29 @@
 import sys
-
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator, QDoubleValidator
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton
 
 formatNumber = lambda n: n \
     if n % 1 \
     else int(n)
+
+
+def do_not_run_twice(f, prev_args=[]):
+    def wrapper(*args, **kwargs):
+        if prev_args and args == prev_args[-1]:
+            return None
+
+        prev_args.append(args)
+
+        return f(*args, **kwargs)
+
+    return wrapper
+
+
+def isNum(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 
 class Calculator(QWidget):
@@ -62,7 +79,8 @@ class Calculator(QWidget):
         self.b_mult.clicked.connect(lambda: self._operation("*"))
         self.b_div.clicked.connect(lambda: self._operation("/"))
 
-        self.b_dot.clicked.connect(lambda: self._operation("."))
+
+        self.b_dot.clicked.connect(lambda: self._button("."))
 
         # Result
         self.b_result.clicked.connect(self._result)
@@ -72,12 +90,12 @@ class Calculator(QWidget):
         self.b_2.clicked.connect(lambda: self._button("2"))
         self.b_3.clicked.connect(lambda: self._button("3"))
 
-
-
     def _button(self, param):
         line = self.input.text()
+        count = self.input.text().count('.')
         self.input.setText(line + param)
 
+    # @do_not_run_twice
     def _operation(self, op):
         self.num_1 = formatNumber(float(self.input.text()))
         self.op = op
@@ -86,16 +104,18 @@ class Calculator(QWidget):
     # Func calculations
     def _result(self):
         self.num_2 = formatNumber(float(self.input.text()))
-        if self.op == "+":
+        if self.op == "+" and isNum(self.num_2) == True and isNum(self.num_1) == True:
             self.input.setText(str(self.num_1 + self.num_2))
-        if self.op == "-":
+
+        if self.op == "-" and isNum(self.num_2) == True and isNum(self.num_1) == True:
             self.input.setText(str(self.num_1 - self.num_2))
-        if self.op == "*":
+
+        if self.op == "*" and isNum(self.num_2) and isNum(self.num_1):
             self.input.setText(str(self.num_1 * self.num_2))
-        if self.op == "/" and self.num_1 != 0 and self.num_2 != 0:
+
+        if self.op == "/" and self.num_1 != 0 and self.num_2 != 0 and isNum(self.num_2) == True and isNum(
+                self.num_1) == True:
             self.input.setText(str(self.num_1 / self.num_2))
-        if self.op == "." and str(self.num_1).find('.') == -1:
-            self.input.setText(str(self.num_1) + '.' + str(self.num_2))
 
 
 def application():
