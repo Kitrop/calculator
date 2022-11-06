@@ -153,6 +153,7 @@ class Calculator(QWidget):
             else:
                 return self.input.setText("Нельзя делить на ноль")
 
+
 def application():
     app = QApplication(sys.argv)
     win = Calculator()
