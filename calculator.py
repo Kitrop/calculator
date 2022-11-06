@@ -150,7 +150,8 @@ class Calculator(QWidget):
 
             if self.op == "/" and self.num_1 != 0 and self.num_2 != 0:
                 self.input.setText(str(self.num_1 / self.num_2))
-
+            else:
+                return self.input.setText("Нельзя делить на ноль")
 
 def application():
     app = QApplication(sys.argv)
